@@ -4,12 +4,26 @@ const {UserModel,TodoModel}=require("./db");
 const mongoose=require("mongoose");
 const jwt=require("jsonwebtoken");
 const JWT_SECRET="Iloveyou";
-mongoose.connect("")
+const {z}=require("zod");
+mongoose.connect("mongodb+srv://ak3407722_db_user:OLBbrNU7lcgRIoRL@cluster0.yszriqh.mongodb.net/todo-app")
 
 const app=express();
 app.use(express.json());
 
 app.post("/signup",async function(req,res){
+    const requireBody=z.object({
+        email:z.string().min(3).max(17),
+        name:z.string().min(3).max(16),
+        password:z.string().min(3).max(9)
+    })
+    const parseDataWithSuccess=requireBody.safeParse(req.body);
+    if(!parseDataWithSuccess.success){
+        res.json({
+            message:"Incorrect password",
+            error:parseDataWithSuccess.error
+        })
+        return
+    }
     const email=req.body.email;
     const password=req.body.password;
     const name=req.body.name;
@@ -33,7 +47,7 @@ app.post("/signin",async function(req,res){
         email:email,
      
     });
-    const passwordMatch=await bcrypt.compare(password,response.password);
+    const passwordMatch=await bcrypt.compare(password,user.password);
     if(passwordMatch){
         const token=jwt.sign({
             id:user._id.toString()
@@ -45,7 +59,7 @@ res.json({
     }else{
         res.status(403).json({
             message:"Incorrect Credential"
-        })
+        });
     }
 });
 function auth(req,res,next){
