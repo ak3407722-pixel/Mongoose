@@ -5,7 +5,7 @@ const mongoose=require("mongoose");
 const jwt=require("jsonwebtoken");
 const JWT_SECRET="Iloveyou";
 const {z}=require("zod");
-mongoose.connect("mongodb+srv://ak3407722_db_user:OLBbrNU7lcgRIoRL@cluster0.yszriqh.mongodb.net/todo-app")
+mongoose.connect("")
 
 const app=express();
 app.use(express.json());
